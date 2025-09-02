@@ -1,6 +1,6 @@
 package com.exalt.healthcare.domain.model.entity;
 
-import com.exalt.healthcare.enums.Role;
+import com.exalt.healthcare.domain.valueobject.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,12 +15,16 @@ import java.beans.ConstructorProperties;
 @ToString
 
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long user_id;
+
+    @Column(name = "username", nullable = false)
+    private String username;
 
     @Column(name = "email", nullable = false)
     private String email;
@@ -32,8 +36,9 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
-    @ConstructorProperties({"email", "password", "role"})
-    public User(String email, String password, Role role){
+    @ConstructorProperties({"username", "email", "password", "role"})
+    public User(String username, String email, String password, Role role){
+        this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;

@@ -1,4 +1,4 @@
-package com.exalt.healthcare.enums;
+package com.exalt.healthcare.domain.valueobject;
 
 import lombok.Getter;
 
