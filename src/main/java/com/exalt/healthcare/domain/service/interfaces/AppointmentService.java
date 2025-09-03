@@ -12,8 +12,9 @@ import java.util.Optional;
 public interface AppointmentService {
     Appointment addNewAppointment(Appointment appointment);
     List<Appointment> getAllAppointments();
-    void DeleteAppointment(Long id);
-    List<Appointment> getAppointmentsByData(LocalDate date);
+    void deleteAppointment(Long id);
+    List<Appointment> getAppointmentsByDate(LocalDate date);
     List<Appointment> getAppointmentsByDoctor(Doctor doctor);
     List<Appointment> getAppointmentsByPatient(Patient patient);
+    Appointment updateAppointment(Long id, Appointment appointment);
 }

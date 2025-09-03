@@ -1,5 +1,6 @@
 package com.exalt.healthcare.domain.service.implementations;
 
+import com.exalt.healthcare.common.exception.AppointmentNotFoundException;
 import com.exalt.healthcare.domain.model.entity.Appointment;
 import com.exalt.healthcare.domain.model.entity.Doctor;
 import com.exalt.healthcare.domain.model.entity.Patient;
@@ -33,22 +34,36 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void DeleteAppointment(Long id) throws AppointmentNotFoundException {
-        Appointment appointment = this.repository.findById(id);
+    public void deleteAppointment(Long id) throws AppointmentNotFoundException {
+        Appointment appointment = repository.findById(id)
+                .orElseThrow(() -> new AppointmentNotFoundException("No Appointment with this id : " + id));
+        this.repository.delete(appointment);
     }
 
     @Override
-    public List<Appointment> getAppointmentsByData(LocalDate date) {
-        return List.of();
+    public List<Appointment> getAppointmentsByDate(LocalDate date) {
+        return this.repository.findAppointmentsByDate(date);
     }
 
     @Override
     public List<Appointment> getAppointmentsByDoctor(Doctor doctor) {
-        return List.of();
+        return this.repository.findAppointmentsByDoctor(doctor);
     }
 
     @Override
     public List<Appointment> getAppointmentsByPatient(Patient patient) {
-        return List.of();
+        return this.repository.findAppointmentsByPatient(patient);
+    }
+
+    @Override
+    public Appointment updateAppointment(Long id, Appointment appointment) throws AppointmentNotFoundException {
+        Appointment updatedAppointment = this.repository.findById(id)
+                .orElseThrow(() -> new AppointmentNotFoundException("No Appointment with this id : " + id));
+        updatedAppointment.setAppointmentDateTime(appointment.getAppointmentDateTime());
+        updatedAppointment.setDoctor(appointment.getDoctor());
+        updatedAppointment.setStatus(appointment.getStatus());
+        updatedAppointment.setNotes(appointment.getNotes());
+        updatedAppointment.setPatient(appointment.getPatient());
+        return this.repository.save(updatedAppointment);
     }
 }
