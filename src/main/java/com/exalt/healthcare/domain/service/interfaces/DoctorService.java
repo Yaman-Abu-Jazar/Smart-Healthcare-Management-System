@@ -1,7 +1,11 @@
 package com.exalt.healthcare.domain.service.interfaces;
 
-import org.springframework.stereotype.Service;
+import com.exalt.healthcare.domain.model.entity.Doctor;
 
-@Service
+import java.util.List;
+import java.util.Optional;
+
 public interface DoctorService {
+    Doctor addingNewDoctor(Doctor doctor);
+    List<Doctor> findDoctorsBySpecialty(String specialty);
 }

@@ -10,6 +10,4 @@ import java.util.List;
 
 @NoRepositoryBean
 public interface DocumentRepository<T, ID> extends MongoRepository<T, ID> {
-    List<T> findAll(Specification<T> spec);
-    Page<T> findAll(Specification<T> spec, Pageable pageable);
 }

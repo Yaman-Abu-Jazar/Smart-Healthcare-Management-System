@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 
 @Document(collection = "MedicalRecords")
-public class MedicalRecords {
+public class MedicalRecord {
 
     @Transient
     public static final String SEQUENCE_NAME = "records_sequence";
@@ -37,6 +37,4 @@ public class MedicalRecords {
     private String [] notes;
 
     private LocalDate date;
-
-
 }
