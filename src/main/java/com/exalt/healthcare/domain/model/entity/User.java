@@ -2,6 +2,8 @@ package com.exalt.healthcare.domain.model.entity;
 
 import com.exalt.healthcare.domain.valueobject.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,18 +25,24 @@ public class User {
     @Column(name = "user_id")
     private long user_id;
 
+    @NotBlank
     @Column(name = "username", nullable = false)
     private String username;
 
+    @NotBlank
     @Column(name = "email", nullable = false)
     private String email;
 
+    @NotBlank
     @Column(name = "password", nullable = false)
     private String password;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
+
+    private boolean deleted;
 
     @ConstructorProperties({"username", "email", "password", "role"})
     public User(String username, String email, String password, Role role){

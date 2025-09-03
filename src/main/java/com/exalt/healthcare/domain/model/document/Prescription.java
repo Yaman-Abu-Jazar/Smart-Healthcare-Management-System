@@ -1,6 +1,6 @@
 package com.exalt.healthcare.domain.model.document;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,15 +21,15 @@ import java.time.LocalDate;
 public class Prescription {
 
     @Transient
-    public static final String SEQUENCE_NAME = "users_sequence";
+    public static final String SEQUENCE_NAME = "prescriptions_sequence";
 
     @Id
     private long id;
 
-    @NotBlank
+    @NotNull
     private Long patient_id;
 
-    @NotBlank
+    @NotNull
     private Long doctor_id;
 
     private String [] medications;
