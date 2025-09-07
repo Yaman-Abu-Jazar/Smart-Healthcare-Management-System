@@ -8,4 +8,6 @@ public interface UserService {
     User findByEmail(String email);
     boolean isExistUsername(String username);
     boolean isExistEmail(String email);
+    void deleteUser(Long id);
+    User updateUser(Long id, User userDetails);
 }
