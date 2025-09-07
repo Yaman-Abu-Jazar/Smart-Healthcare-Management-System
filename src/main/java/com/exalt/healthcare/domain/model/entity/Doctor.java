@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import java.beans.ConstructorProperties;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ import java.util.List;
 @ToString
 
 @Entity
-public class Doctor {
+public class Doctor implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +43,7 @@ public class Doctor {
     private User user;
 
     @OneToMany(mappedBy = "doctor")
+    @ToString.Exclude
     private List<Appointment> appointmentList;
 
     @Size(max = 10)
