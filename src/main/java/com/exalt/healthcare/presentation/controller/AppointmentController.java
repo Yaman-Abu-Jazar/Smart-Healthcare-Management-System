@@ -33,8 +33,9 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteAppointment(@PathVariable Long id){
+    public ResponseEntity<Appointment> deleteAppointment(@PathVariable Long id){
         this.service.deleteAppointment(id);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/update/{id}")

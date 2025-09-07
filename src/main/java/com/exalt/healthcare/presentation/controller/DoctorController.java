@@ -3,12 +3,10 @@ package com.exalt.healthcare.presentation.controller;
 import com.exalt.healthcare.common.exception.DoctorNotFoundException;
 import com.exalt.healthcare.domain.model.entity.Doctor;
 import com.exalt.healthcare.domain.service.implementations.DoctorServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,4 +30,21 @@ public class DoctorController {
         return ResponseEntity.ok(doctors);
     }
 
+    @PostMapping("/new")
+    public Doctor addNewDoctor(@Valid @RequestBody Doctor doctor){
+        return   this.service.addingNewDoctor(doctor);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Doctor> updateDoctor(@PathVariable Long id, @Valid @RequestBody Doctor doctor)
+            throws DoctorNotFoundException{
+        Doctor updatedDoctor = this.service.updateDoctor(id, doctor);
+        return ResponseEntity.ok(updatedDoctor);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Doctor> deleteDoctor(@PathVariable Long id) throws DoctorNotFoundException{
+        this.service.deleteDoctorById(id);
+        return ResponseEntity.ok().build();
+    }
 }

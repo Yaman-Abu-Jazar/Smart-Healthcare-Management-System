@@ -6,10 +6,12 @@ import com.exalt.healthcare.domain.model.entity.Doctor;
 import com.exalt.healthcare.domain.model.entity.Patient;
 import com.exalt.healthcare.domain.repository.jpa.AppointmentRepository;
 import com.exalt.healthcare.domain.service.interfaces.AppointmentService;
+import com.exalt.healthcare.domain.valueobject.AppointmentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,11 +61,27 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment updateAppointment(Long id, Appointment appointment) throws AppointmentNotFoundException {
         Appointment updatedAppointment = this.repository.findById(id)
                 .orElseThrow(() -> new AppointmentNotFoundException("No Appointment with this id : " + id));
-        updatedAppointment.setAppointmentDateTime(appointment.getAppointmentDateTime());
+        updatedAppointment.setDate(appointment.getDate());
         updatedAppointment.setDoctor(appointment.getDoctor());
         updatedAppointment.setStatus(appointment.getStatus());
         updatedAppointment.setNotes(appointment.getNotes());
         updatedAppointment.setPatient(appointment.getPatient());
         return this.repository.save(updatedAppointment);
+    }
+
+    @Override
+    public Appointment completeAppointment(Long appointmentId, Long doctorId) {
+        Appointment appointment = repository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + appointmentId));
+
+        // Verify the doctor owns this appointment
+        if (appointment.getDoctor().getId() != doctorId) {
+            throw new RuntimeException("You can only complete your own appointments");
+        }
+
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        appointment.setCompletedAt(LocalDateTime.now());
+
+        return repository.save(appointment);
     }
 }

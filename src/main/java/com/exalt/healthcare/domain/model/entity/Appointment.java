@@ -25,7 +25,7 @@ public class Appointment {
     private Long id;
 
     @NotNull
-    private LocalDateTime appointmentDateTime;
+    private LocalDateTime date;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status; // SCHEDULED, COMPLETED, CANCELLED
@@ -40,9 +40,11 @@ public class Appointment {
 
     private String notes;
 
-    @ConstructorProperties({"appointmentDateTime", "status", "doctor", "patient", "notes"})
-    public Appointment(LocalDateTime appointmentDateTime, AppointmentStatus status, Doctor doctor, Patient patient, String notes) {
-        this.appointmentDateTime = appointmentDateTime;
+    private LocalDateTime completedAt;
+
+    @ConstructorProperties({"date", "status", "doctor", "patient", "notes"})
+    public Appointment(LocalDateTime date, AppointmentStatus status, Doctor doctor, Patient patient, String notes) {
+        this.date = date;
         this.status = status;
         this.doctor = doctor;
         this.patient = patient;

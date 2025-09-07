@@ -31,4 +31,36 @@ public class DoctorServiceImpl implements DoctorService {
         return this.repository.findDoctorBySpecialty(specialty);
     }
 
+    @Override
+    public Doctor findDoctorById(long id) {
+        return this.repository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with id: " + id));
+    }
+
+    @Override
+    public List<Doctor> findAllDoctors() {
+        return this.repository.findAll();
+    }
+
+    @Override
+    public Doctor updateDoctor(Long id, Doctor doctorDetails) {
+        Doctor updatedDoctor = this.repository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with id: " + id));
+
+        updatedDoctor.setFirst_name(doctorDetails.getFirst_name());
+        updatedDoctor.setLast_name(doctorDetails.getLast_name());
+        updatedDoctor.setSpecialty(doctorDetails.getSpecialty());
+        updatedDoctor.setPhone(doctorDetails.getPhone());
+        updatedDoctor.setAppointmentList(doctorDetails.getAppointmentList());
+
+        return this.repository.save(updatedDoctor);
+    }
+
+    @Override
+    public void deleteDoctorById(Long id) throws DoctorNotFoundException {
+        Doctor doctor = this.repository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with id: " + id));
+        this.repository.deleteById(id);
+    }
+
 }
