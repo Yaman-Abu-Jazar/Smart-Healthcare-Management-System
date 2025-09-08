@@ -44,12 +44,13 @@ public class User {
 
     private boolean deleted;
 
-    @ConstructorProperties({"username", "email", "password", "role"})
-    public User(String username, String email, String password, Role role){
+    @ConstructorProperties({"username", "email", "password", "role", "deleted"})
+    public User(String username, String email, String password, Role role, boolean deleted){
         this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.deleted = deleted;
     }
 
 }

@@ -1,5 +1,15 @@
 package com.exalt.healthcare.domain.service.interfaces;
 
-public interface MedicalRecordService {
+import com.exalt.healthcare.domain.model.document.MedicalRecord;
 
+import java.util.List;
+
+public interface MedicalRecordService {
+    MedicalRecord saveMedicalRecord(MedicalRecord medicalRecord);
+    List<MedicalRecord> getMedicalRecordsByPatientId(Long patientId);
+    List<MedicalRecord> getMedicalRecordsByDoctorId(Long doctorId);
+    MedicalRecord getMedicalRecordById(Long id);
+    List<MedicalRecord> getAllMedicalRecords();
+    MedicalRecord updateMedicalRecord(Long id, MedicalRecord recordDetails);
+    void deleteMedicalRecord(Long id);
 }

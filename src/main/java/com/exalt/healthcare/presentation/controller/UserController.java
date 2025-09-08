@@ -21,8 +21,8 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<User> addNewUser(@Valid @RequestBody User user){
-        return ResponseEntity.ok(this.service.createUser(user));
+    public User addNewUser(@Valid @RequestBody User user){
+        return this.service.createUser(user);
     }
 
     @DeleteMapping("/delete/{id}")
