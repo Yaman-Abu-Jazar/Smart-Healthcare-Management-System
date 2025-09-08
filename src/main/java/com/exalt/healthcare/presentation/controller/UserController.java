@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -27,5 +29,25 @@ public class UserController {
     public ResponseEntity<User> addNewUser(@PathVariable Long id){
         this.service.deleteUser(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return ResponseEntity.ok(this.service.findAllUsers());
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email){
+        return ResponseEntity.ok(this.service.findByEmail(email));
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username){
+        return ResponseEntity.ok(this.service.findByUsername(username));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user){
+        return ResponseEntity.ok(this.service.updateUser(id, user));
     }
 }

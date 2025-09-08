@@ -9,13 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/appointments")
 public class AppointmentController {
 
-    private AppointmentServiceImpl service;
+    private final AppointmentServiceImpl service;
 
     @Autowired
     public AppointmentController(AppointmentServiceImpl service) {

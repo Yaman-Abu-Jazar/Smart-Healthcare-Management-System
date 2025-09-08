@@ -4,6 +4,7 @@ import com.exalt.healthcare.common.exception.DoctorNotFoundException;
 import com.exalt.healthcare.domain.model.entity.Doctor;
 import com.exalt.healthcare.domain.repository.jpa.DoctorRepository;
 import com.exalt.healthcare.domain.service.interfaces.DoctorService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository repository;

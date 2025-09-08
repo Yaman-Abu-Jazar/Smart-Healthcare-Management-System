@@ -7,6 +7,7 @@ import com.exalt.healthcare.domain.model.entity.Patient;
 import com.exalt.healthcare.domain.repository.jpa.AppointmentRepository;
 import com.exalt.healthcare.domain.service.interfaces.AppointmentService;
 import com.exalt.healthcare.domain.valueobject.AppointmentStatus;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository repository;

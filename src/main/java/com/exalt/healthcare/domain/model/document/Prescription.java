@@ -8,16 +8,18 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.beans.ConstructorProperties;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 
-@Document(collection = "Prescription")
+@Document(collection = "prescriptions")
 public class Prescription {
 
     @Transient
@@ -27,22 +29,25 @@ public class Prescription {
     private long id;
 
     @NotNull
-    private Long patient_id;
+    @Field("patient_id")
+    private Long patientId;
 
     @NotNull
-    private Long doctor_id;
+    @Field("doctor_id")
+    private Long doctorId;
 
-    private String [] medications;
+    private List<String> medications;
 
-    private String [] notes;
+    private List<String> notes;
 
-    private LocalDate date;
+    @Field("prescription_date")
+    private LocalDateTime createdAt;
 
-    @ConstructorProperties({"patient_id", "doctor_id", "date", "notes", "medications"})
-    public Prescription(Long patient_id, Long doctor_id, LocalDate date, String [] notes, String[] medications) {
-        this.patient_id = patient_id;
-        this.doctor_id = doctor_id;
-        this.date = date;
+    @ConstructorProperties({"patientId", "doctorId", "createdAt", "notes", "medications"})
+    public Prescription(Long patientId, Long doctorId, LocalDateTime createdAt, List<String> notes, List<String> medications) {
+        this.patientId = patientId;
+        this.doctorId = doctorId;
+        this.createdAt = createdAt;
         this.notes = notes;
         this.medications = medications;
     }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -70,5 +72,10 @@ public class UserServiceImpl implements UserService {
         updatedUser.setUsername(userDetails.getUsername());
 
         return this.repository.save(updatedUser);
+    }
+
+    @Override
+    public List<User> findAllUsers(){
+        return this.repository.findAll();
     }
 }

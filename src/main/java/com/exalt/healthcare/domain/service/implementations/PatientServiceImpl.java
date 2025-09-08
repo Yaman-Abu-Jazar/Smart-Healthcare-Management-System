@@ -4,6 +4,7 @@ import com.exalt.healthcare.common.exception.PatientNotFoundException;
 import com.exalt.healthcare.domain.model.entity.Patient;
 import com.exalt.healthcare.domain.repository.jpa.PatientRepository;
 import com.exalt.healthcare.domain.service.interfaces.PatientService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository repository;
