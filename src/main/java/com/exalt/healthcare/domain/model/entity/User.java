@@ -8,8 +8,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.beans.ConstructorProperties;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +24,7 @@ import java.beans.ConstructorProperties;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,4 +59,23 @@ public class User {
         this.deleted = deleted;
     }
 
+    @Override
+    public void eraseCredentials() {
+
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername(){
+        return this.email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !this.deleted;
+    }
 }
