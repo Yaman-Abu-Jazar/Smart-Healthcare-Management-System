@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/appointments")
+@RequestMapping("/api/appointments")
 public class AppointmentController {
 
     private final AppointmentServiceImpl service;
@@ -21,26 +21,5 @@ public class AppointmentController {
         this.service = service;
     }
 
-    @GetMapping("/all")
-    public List<Appointment> getAllAppointments(){
-        return this.service.getAllAppointments();
-    }
 
-    @PostMapping("/add")
-    public Appointment addNewAppointment(@Valid @RequestBody Appointment appointment){
-        return this.service.addNewAppointment(appointment);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Appointment> deleteAppointment(@PathVariable Long id){
-        this.service.deleteAppointment(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Appointment> updateAppointment(@Valid @RequestBody Appointment newAppointment, @PathVariable Long id)
-        throws AppointmentNotFoundException {
-        Appointment appointment = this.service.updateAppointment(id, newAppointment);
-         return ResponseEntity.ok(appointment);
-    }
 }

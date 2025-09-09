@@ -6,8 +6,8 @@ import lombok.Getter;
 
 public enum Role {
     ADMIN(0, "admin_role"),
-    DOCTOR(1, "doctor"),
-    PATIENT(2, "patient");
+    DOCTOR(1, "doctor_role"),
+    PATIENT(2, "patient_role");
 
     private final int level;
     private final String description;

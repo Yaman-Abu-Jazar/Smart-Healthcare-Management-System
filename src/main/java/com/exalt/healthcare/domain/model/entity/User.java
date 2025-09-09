@@ -20,7 +20,6 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @Builder
-@RequiredArgsConstructor
 
 @Entity
 @Table(name = "users")
@@ -30,10 +29,6 @@ public class User implements UserDetails, CredentialsContainer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long id;
-
-    @NotBlank
-    @Column(name = "username", nullable = false)
-    private String username;
 
     @NotBlank
     @Column(name = "first_name", nullable = false)
@@ -58,9 +53,8 @@ public class User implements UserDetails, CredentialsContainer {
 
     private boolean deleted;
 
-    @ConstructorProperties({"username", "email", "firstName", "lastName", "password", "role", "deleted"})
-    public User(String username, String email, String firstName, String lastName, String password, Role role, boolean deleted){
-        this.username = username;
+    @ConstructorProperties({"email", "firstName", "lastName", "password", "role", "deleted"})
+    public User(String email, String firstName, String lastName, String password, Role role, boolean deleted){
         this.email = email;
         this.password = password;
         this.role = role;
@@ -76,7 +70,7 @@ public class User implements UserDetails, CredentialsContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

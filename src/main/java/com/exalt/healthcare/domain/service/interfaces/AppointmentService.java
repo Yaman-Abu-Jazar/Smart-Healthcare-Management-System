@@ -18,4 +18,5 @@ public interface AppointmentService {
     List<Appointment> getAppointmentsByPatient(Patient patient);
     Appointment updateAppointment(Long id, Appointment appointment);
     Appointment completeAppointment(Long appointmentId, Long doctorId);
+    Appointment bookAppointment(Long appointmentId, Long doctorId);
 }

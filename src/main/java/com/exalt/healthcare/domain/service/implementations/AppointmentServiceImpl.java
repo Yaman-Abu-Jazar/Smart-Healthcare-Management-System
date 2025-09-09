@@ -74,7 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Appointment completeAppointment(Long appointmentId, Long doctorId) {
         Appointment appointment = repository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id: " + appointmentId));
 
         // Verify the doctor owns this appointment
         if (appointment.getDoctor().getId() != doctorId) {
@@ -85,5 +85,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setCompletedAt(LocalDateTime.now());
 
         return repository.save(appointment);
+    }
+
+    @Override
+    public Appointment bookAppointment(Long appointmentId, Long doctorId) {
+        return null;
     }
 }

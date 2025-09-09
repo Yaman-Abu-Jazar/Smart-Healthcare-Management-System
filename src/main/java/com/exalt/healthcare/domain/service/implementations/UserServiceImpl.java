@@ -32,20 +32,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return this.repository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found with username : " + username));
-    }
-
-    @Override
     public User findByEmail(String email) {
         return this.repository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email : " + email));
-    }
-
-    @Override
-    public boolean isExistUsername(String username) {
-        return this.repository.existsByUsername(username);
     }
 
     @Override
@@ -69,7 +58,8 @@ public class UserServiceImpl implements UserService {
         updatedUser.setEmail(userDetails.getEmail());
         updatedUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
         updatedUser.setRole(userDetails.getRole());
-        updatedUser.setUsername(userDetails.getUsername());
+        updatedUser.setFirstName(userDetails.getFirstName());
+        updatedUser.setLastName(userDetails.getLastName());
 
         return this.repository.save(updatedUser);
     }

@@ -30,29 +30,8 @@ public class PrescriptionController {
         return ResponseEntity.ok(this.service.getPrescriptionsByDoctorId(id));
     }
 
-    @GetMapping("/patient/{id}")
-    public ResponseEntity<List<Prescription>> getPrescriptionsByPatientId(@PathVariable Long id){
-        return ResponseEntity.ok(this.service.getPrescriptionsByPatientId(id));
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<Prescription> getPrescriptionById(@PathVariable Long id){
         return ResponseEntity.ok(this.service.getPrescriptionById(id));
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity<Prescription> addNewPrescription(@Valid @RequestBody Prescription prescription){
-        return ResponseEntity.ok(this.service.savePrescription(prescription));
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Prescription> updatePrescription(@PathVariable Long id, @Valid @RequestBody Prescription prescription){
-        return ResponseEntity.ok(this.service.updatePrescription(id, prescription));
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Prescription> deletePrescription(@PathVariable Long id){
-        this.service.deletePrescription(id);
-        return ResponseEntity.ok().build();
     }
 }
