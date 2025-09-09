@@ -95,33 +95,6 @@ public class AdminController {
     }
     /// ////////////////////////////////////////////////////////////////////////////////////
     /// ////////////////////////////////////////////////////////////////////////////////////
-    /// /////////////////////////// Appointment Management
-    /// ////////////////////////////////////////////////////////////////////////////////////
-    /// ////////////////////////////////////////////////////////////////////////////////////
-    @GetMapping("/appointment/get/all")
-    public List<Appointment> getAllAppointments(){
-        return this.appointmentService.getAllAppointments();
-    }
-
-    @PostMapping("/appointment/add")
-    public Appointment addNewAppointment(@Valid @RequestBody AppointmentDto appointment){
-        return this.appointmentService.addNewAppointment(appointment);
-    }
-
-    @DeleteMapping("/appointment/delete/{id}")
-    public ResponseEntity<Appointment> deleteAppointment(@PathVariable Long id){
-        this.appointmentService.deleteAppointment(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/appointment/update/{id}")
-    public ResponseEntity<Appointment> updateAppointment(@Valid @RequestBody Appointment newAppointment, @PathVariable Long id)
-            throws AppointmentNotFoundException {
-        Appointment appointment = this.appointmentService.updateAppointment(id, newAppointment);
-        return ResponseEntity.ok(appointment);
-    }
-    /// ////////////////////////////////////////////////////////////////////////////////////
-    /// ////////////////////////////////////////////////////////////////////////////////////
     /// /////////////////////////// Registration Management
     /// ////////////////////////////////////////////////////////////////////////////////////
     /// ////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,9 @@
 package com.exalt.healthcare.presentation.controller;
 
+import com.exalt.healthcare.common.exception.AppointmentNotFoundException;
+import com.exalt.healthcare.common.payload.AppointmentDto;
 import com.exalt.healthcare.domain.model.document.Prescription;
+import com.exalt.healthcare.domain.model.entity.Appointment;
 import com.exalt.healthcare.domain.service.implementations.AppointmentServiceImpl;
 import com.exalt.healthcare.domain.service.implementations.DoctorServiceImpl;
 import com.exalt.healthcare.domain.service.implementations.PrescriptionServiceImpl;
@@ -9,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/doctor")
@@ -39,5 +43,32 @@ public class DoctorController {
     public ResponseEntity<Prescription> deletePrescription(@PathVariable Long id){
         this.prescriptionService.deletePrescription(id);
         return ResponseEntity.ok().build();
+    }
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// Appointment Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    @GetMapping("/appointment/get/all")
+    public List<Appointment> getAllAppointments(){
+        return this.appointmentService.getAllAppointments();
+    }
+
+    @PostMapping("/appointment/add")
+    public Appointment addNewAppointment(@Valid @RequestBody AppointmentDto appointment){
+        return this.appointmentService.addNewAppointment(appointment);
+    }
+
+    @DeleteMapping("/appointment/delete/{id}")
+    public ResponseEntity<Appointment> deleteAppointment(@PathVariable Long id){
+        this.appointmentService.deleteAppointment(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/appointment/update/{id}")
+    public ResponseEntity<Appointment> updateAppointment(@Valid @RequestBody Appointment newAppointment, @PathVariable Long id)
+            throws AppointmentNotFoundException {
+        Appointment appointment = this.appointmentService.updateAppointment(id, newAppointment);
+        return ResponseEntity.ok(appointment);
     }
 }

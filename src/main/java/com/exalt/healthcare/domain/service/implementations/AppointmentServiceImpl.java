@@ -2,16 +2,23 @@ package com.exalt.healthcare.domain.service.implementations;
 
 import com.exalt.healthcare.common.exception.AppointmentNotFoundException;
 import com.exalt.healthcare.common.exception.DoctorNotFoundException;
+import com.exalt.healthcare.common.exception.PatientNotFoundException;
+import com.exalt.healthcare.common.exception.UserNotFoundException;
 import com.exalt.healthcare.common.payload.AppointmentDto;
 import com.exalt.healthcare.domain.model.entity.Appointment;
 import com.exalt.healthcare.domain.model.entity.Doctor;
 import com.exalt.healthcare.domain.model.entity.Patient;
+import com.exalt.healthcare.domain.model.entity.User;
 import com.exalt.healthcare.domain.repository.jpa.AppointmentRepository;
 import com.exalt.healthcare.domain.repository.jpa.DoctorRepository;
+import com.exalt.healthcare.domain.repository.jpa.PatientRepository;
+import com.exalt.healthcare.domain.repository.jpa.UserRepository;
 import com.exalt.healthcare.domain.service.interfaces.AppointmentService;
 import com.exalt.healthcare.domain.valueobject.AppointmentStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,11 +32,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
+    private final PatientRepository patientRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository){
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, PatientRepository patientRepository, UserRepository userRepository){
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
+        this.patientRepository = patientRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -50,7 +61,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<Appointment> getAllAppointments() {
-        return this.appointmentRepository.findAll();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email : " + email));
+
+        Doctor doctor = this.doctorRepository.findByUser(user)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with user id : " + user.getId()));
+
+        return this.appointmentRepository.findAppointmentsByDoctor_Id(doctor.getId());
     }
 
     @Override
@@ -67,12 +87,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<Appointment> getAppointmentsByDoctorId(Long doctorId) {
-        return this.appointmentRepository.findAppointmentsByDoctorId(doctorId);
+        return this.appointmentRepository.findAppointmentsByDoctor_Id(doctorId);
     }
 
     @Override
     public List<Appointment> getAppointmentsByPatientId(Long patientId) {
-        return this.appointmentRepository.findAppointmentsByPatientId(patientId);
+        return this.appointmentRepository.findAppointmentsByPatient_Id(patientId);
     }
 
     @Override
@@ -84,16 +104,26 @@ public class AppointmentServiceImpl implements AppointmentService {
         updatedAppointment.setStatus(appointment.getStatus());
         updatedAppointment.setNotes(appointment.getNotes());
         updatedAppointment.setPatient(appointment.getPatient());
+        updatedAppointment.setStartTime(appointment.getStartTime());
+        updatedAppointment.setEndTime(appointment.getEndTime());
         return this.appointmentRepository.save(updatedAppointment);
     }
 
     @Override
-    public Appointment completeAppointment(Long appointmentId, Long doctorId) {
+    public Appointment completeAppointment(Long appointmentId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id: " + appointmentId));
 
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email : " + email));
+
+        Doctor doctor = this.doctorRepository.findByUser(user)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with user id : " + user.getId()));
         // Verify the doctor owns this appointment
-        if (appointment.getDoctor().getId() != doctorId) {
+        if (appointment.getDoctor().getId() != doctor.getId()) {
             throw new RuntimeException("You can only complete your own appointments");
         }
 
@@ -103,7 +133,73 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment bookAppointment(Long appointmentId, Long doctorId) {
-        return null;
+    public Appointment bookAppointment(Long appointmentId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email : " + email));
+
+        Appointment appointment = this.appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id : " + appointmentId));
+
+        Patient patient = this.patientRepository.findByUser(user)
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found with user id : " + user.getId()));
+
+        if(appointment.getStatus() == AppointmentStatus.SCHEDULED){
+            appointment.setStatus(AppointmentStatus.BUSY);
+            appointment.setPatient(patient);
+            return this.appointmentRepository.save(appointment);
+        } else {
+            throw new AppointmentNotFoundException("Appointment with id : " + appointmentId + " is not available");
+        }
+    }
+
+    @Override
+    public Appointment cancelAppointment(Long appointmentId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email : " + email));
+
+        Appointment appointment = this.appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id : " + appointmentId));
+
+        Patient patient = this.patientRepository.findByUser(user)
+                .orElseThrow(() -> new PatientNotFoundException("Patient not found with user id : " + user.getId()));
+
+        if(appointment.getStatus() == AppointmentStatus.BUSY){
+            appointment.setStatus(AppointmentStatus.SCHEDULED);
+            appointment.setPatient(null);
+            return this.appointmentRepository.save(appointment);
+        } else {
+            throw new AppointmentNotFoundException("Appointment with id : " + appointmentId + " is available already");
+        }
+    }
+
+    @Override
+    public Appointment cancelAppointmentByDoctor(Long appointmentId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new AppointmentNotFoundException("Appointment not found with id: " + appointmentId));
+
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email : " + email));
+
+        Doctor doctor = this.doctorRepository.findByUser(user)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with user id : " + user.getId()));
+        // Verify the doctor owns this appointment
+        if (appointment.getDoctor().getId() != doctor.getId()) {
+            throw new RuntimeException("You can only complete your own appointments");
+        }
+        if(appointment.getStatus() != AppointmentStatus.CANCELLED){
+            appointment.setStatus(AppointmentStatus.CANCELLED);
+            return this.appointmentRepository.save(appointment);
+        } else {
+            throw new AppointmentNotFoundException("Appointment with id : " + appointmentId + " has been cancelled before");
+        }
     }
 }
