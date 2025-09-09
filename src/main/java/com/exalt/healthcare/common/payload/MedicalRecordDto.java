@@ -16,6 +16,5 @@ public class MedicalRecordDto {
     private Long patientId;
     private List<String> medications;
     private List<String> notes;
-    private LocalDateTime updatedAt;
     private List<String> labResults;
 }

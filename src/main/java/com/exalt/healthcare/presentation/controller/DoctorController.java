@@ -2,11 +2,13 @@ package com.exalt.healthcare.presentation.controller;
 
 import com.exalt.healthcare.common.exception.AppointmentNotFoundException;
 import com.exalt.healthcare.common.payload.AppointmentDto;
+import com.exalt.healthcare.common.payload.MedicalRecordDto;
 import com.exalt.healthcare.common.payload.PrescriptionDto;
+import com.exalt.healthcare.domain.model.document.MedicalRecord;
 import com.exalt.healthcare.domain.model.document.Prescription;
 import com.exalt.healthcare.domain.model.entity.Appointment;
 import com.exalt.healthcare.domain.service.implementations.AppointmentServiceImpl;
-import com.exalt.healthcare.domain.service.implementations.DoctorServiceImpl;
+import com.exalt.healthcare.domain.service.implementations.MedicalRecordServiceImpl;
 import com.exalt.healthcare.domain.service.implementations.PrescriptionServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,13 @@ import java.util.List;
 @RequestMapping("/api/doctor")
 public class DoctorController {
 
-    private final DoctorServiceImpl doctorService;
+    private final MedicalRecordServiceImpl medicalRecordService;
     private final PrescriptionServiceImpl prescriptionService;
     private final AppointmentServiceImpl appointmentService;
 
     @Autowired
-    public DoctorController(DoctorServiceImpl doctorService, PrescriptionServiceImpl prescriptionService, AppointmentServiceImpl appointmentService){
-        this.doctorService = doctorService;
+    public DoctorController(MedicalRecordServiceImpl medicalRecordService, PrescriptionServiceImpl prescriptionService, AppointmentServiceImpl appointmentService){
+        this.medicalRecordService = medicalRecordService;
         this.prescriptionService = prescriptionService;
         this.appointmentService = appointmentService;
     }
@@ -85,5 +87,30 @@ public class DoctorController {
             throws AppointmentNotFoundException {
         Appointment appointment = this.appointmentService.updateAppointment(id, newAppointment);
         return ResponseEntity.ok(appointment);
+    }
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// Medical Record Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    @GetMapping("/record/{id}")
+    public ResponseEntity<MedicalRecord> getRecordById(@PathVariable Long id){
+        return ResponseEntity.ok(this.medicalRecordService.getMedicalRecordById(id));
+    }
+
+    @PostMapping("/record/add")
+    public ResponseEntity<MedicalRecord> addNewRecord(@Valid @RequestBody MedicalRecordDto record){
+        return ResponseEntity.ok(this.medicalRecordService.saveMedicalRecord(record));
+    }
+
+    @PutMapping("/record/update/{id}")
+    public ResponseEntity<MedicalRecord> updateMedicalRecord(@PathVariable Long id, @Valid @RequestBody MedicalRecord record){
+        return ResponseEntity.ok(this.medicalRecordService.updateMedicalRecord(id, record));
+    }
+
+    @DeleteMapping("/record/delete/{id}")
+    public ResponseEntity<MedicalRecord> deleteMedicalRecord(@PathVariable Long id){
+        this.medicalRecordService.deleteMedicalRecord(id);
+        return ResponseEntity.ok().build();
     }
 }

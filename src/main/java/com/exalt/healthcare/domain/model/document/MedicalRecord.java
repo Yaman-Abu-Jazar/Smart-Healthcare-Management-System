@@ -2,10 +2,7 @@ package com.exalt.healthcare.domain.model.document;
 
 import com.exalt.healthcare.domain.valueobject.MedicalRecordStatus;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,6 +17,8 @@ import java.util.List;
 @Setter
 @ToString
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 
 @Document(collection = "medical_records")
 public class MedicalRecord {

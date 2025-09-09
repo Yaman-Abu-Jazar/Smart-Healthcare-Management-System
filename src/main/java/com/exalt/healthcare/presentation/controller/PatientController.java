@@ -23,7 +23,6 @@ import java.util.List;
 @RequestMapping("/api/patient")
 public class PatientController {
 
-    private final PatientServiceImpl patientService;
     private final DoctorServiceImpl doctorService;
     private final MedicalRecordServiceImpl recordService;
     private final AppointmentServiceImpl appointmentService;
@@ -31,8 +30,7 @@ public class PatientController {
     private final AuthenticationServiceImpl authService;
 
     @Autowired
-    public PatientController(PatientServiceImpl patientService, DoctorServiceImpl doctorService, MedicalRecordServiceImpl recordService, AppointmentServiceImpl appointmentService, PrescriptionServiceImpl prescriptionService, AuthenticationServiceImpl authService){
-        this.patientService = patientService;
+    public PatientController(DoctorServiceImpl doctorService, MedicalRecordServiceImpl recordService, AppointmentServiceImpl appointmentService, PrescriptionServiceImpl prescriptionService, AuthenticationServiceImpl authService){
         this.doctorService = doctorService;
         this.recordService = recordService;
         this.appointmentService = appointmentService;
@@ -54,9 +52,9 @@ public class PatientController {
         return ResponseEntity.ok(this.authService.updatePatient(id, patient));
     }
 
-    @GetMapping("/records/patient/{id}")
-    public ResponseEntity<List<MedicalRecord>> getAllRecordsByPatientId(@PathVariable Long id){
-        return ResponseEntity.ok(this.recordService.getMedicalRecordsByPatientId(id));
+    @GetMapping("/records/get")
+    public ResponseEntity<List<MedicalRecord>> getAllRecordsByPatient(){
+        return ResponseEntity.ok(this.recordService.getMyMedicalRecordsByPatient());
     }
 
     @GetMapping("/prescription/history")

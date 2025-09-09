@@ -14,6 +14,7 @@ import com.exalt.healthcare.domain.repository.jpa.PatientRepository;
 import com.exalt.healthcare.domain.repository.jpa.UserRepository;
 import com.exalt.healthcare.domain.repository.mongodb.PrescriptionRepository;
 import com.exalt.healthcare.domain.service.interfaces.PrescriptionService;
+import com.exalt.healthcare.domain.service.interfaces.SequenceGeneratorService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -31,10 +32,12 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
+    private final SequenceGeneratorService sequenceGeneratorService;
 
 
     @Autowired
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, DoctorRepository doctorRepository, UserRepository userRepository, PatientRepository patientRepository){
+    public PrescriptionServiceImpl(SequenceGeneratorService sequenceGeneratorService, PrescriptionRepository prescriptionRepository, DoctorRepository doctorRepository, UserRepository userRepository, PatientRepository patientRepository){
+        this.sequenceGeneratorService = sequenceGeneratorService;
         this.prescriptionRepository = prescriptionRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
@@ -53,6 +56,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with user id : " + user.getId()));
 
         Prescription prescription = Prescription.builder()
+                .id(sequenceGeneratorService.generateSequence(Prescription.SEQUENCE_NAME))
                 .notes(dto.getNotes())
                 .patientId(dto.getPatientId())
                 .createdAt(LocalDateTime.now())

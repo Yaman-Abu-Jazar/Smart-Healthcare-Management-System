@@ -18,5 +18,4 @@ public class PrescriptionDto {
     private Long patientId;
     private List<String> medications;
     private List<String> notes;
-    private LocalDateTime createdAt;
 }
