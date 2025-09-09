@@ -27,7 +27,7 @@ public class PrescriptionController {
 
     @GetMapping("/doctor/{id}")
     public ResponseEntity<List<Prescription>> getPrescriptionsByDoctorId(@PathVariable Long id){
-        return ResponseEntity.ok(this.service.getPrescriptionsByDoctorId(id));
+        return ResponseEntity.ok(this.service.getPrescriptionsByDoctorId());
     }
 
     @GetMapping("/{id}")

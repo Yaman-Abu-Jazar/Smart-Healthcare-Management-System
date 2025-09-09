@@ -59,9 +59,9 @@ public class PatientController {
         return ResponseEntity.ok(this.recordService.getMedicalRecordsByPatientId(id));
     }
 
-    @GetMapping("/prescription/patient/{id}")
-    public ResponseEntity<List<Prescription>> getPrescriptionsByPatientId(@PathVariable Long id){
-        return ResponseEntity.ok(this.prescriptionService.getPrescriptionsByPatientId(id));
+    @GetMapping("/prescription/history")
+    public ResponseEntity<List<Prescription>> getPrescriptionsByPatientId(){
+        return ResponseEntity.ok(this.prescriptionService.getMyPatientPrescriptions());
     }
 
     @GetMapping("/appointment/get/{doctorId}")

@@ -9,4 +9,5 @@ import java.util.List;
 public interface PrescriptionRepository extends DocumentRepository<Prescription, Long>{
     List<Prescription> findByPatientIdOrderByCreatedAtDesc(Long patientId);
     List<Prescription> findByDoctorIdOrderByCreatedAtDesc(Long doctorId);
+    List<Prescription> findByPatientIdAndDoctorIdOrderByCreatedAtDesc(Long patientId, Long doctorId);
 }

@@ -2,6 +2,7 @@ package com.exalt.healthcare.presentation.controller;
 
 import com.exalt.healthcare.common.exception.AppointmentNotFoundException;
 import com.exalt.healthcare.common.payload.AppointmentDto;
+import com.exalt.healthcare.common.payload.PrescriptionDto;
 import com.exalt.healthcare.domain.model.document.Prescription;
 import com.exalt.healthcare.domain.model.entity.Appointment;
 import com.exalt.healthcare.domain.service.implementations.AppointmentServiceImpl;
@@ -28,9 +29,13 @@ public class DoctorController {
         this.prescriptionService = prescriptionService;
         this.appointmentService = appointmentService;
     }
-
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// Prescription Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
     @PostMapping("/prescription/add")
-    public ResponseEntity<Prescription> addNewPrescription(@Valid @RequestBody Prescription prescription){
+    public ResponseEntity<Prescription> addNewPrescription(@Valid @RequestBody PrescriptionDto prescription){
         return ResponseEntity.ok(this.prescriptionService.savePrescription(prescription));
     }
 
@@ -43,6 +48,16 @@ public class DoctorController {
     public ResponseEntity<Prescription> deletePrescription(@PathVariable Long id){
         this.prescriptionService.deletePrescription(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/prescription/patient/{id}")
+    public ResponseEntity<List<Prescription>> getPrescriptionsForPatient(@PathVariable Long id){
+        return ResponseEntity.ok(this.prescriptionService.getPrescriptionsByPatientId(id));
+    }
+
+    @GetMapping("/prescription/all")
+    public ResponseEntity<List<Prescription>> getMyPrescriptions(){
+        return ResponseEntity.ok(this.prescriptionService.getPrescriptionsByDoctorId());
     }
     /// ////////////////////////////////////////////////////////////////////////////////////
     /// ////////////////////////////////////////////////////////////////////////////////////

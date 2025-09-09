@@ -1,0 +1,21 @@
+package com.exalt.healthcare.common.payload;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class MedicalRecordDto {
+    private Long patientId;
+    private List<String> medications;
+    private List<String> notes;
+    private LocalDateTime updatedAt;
+    private List<String> labResults;
+}
