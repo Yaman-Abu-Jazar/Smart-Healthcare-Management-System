@@ -1,0 +1,24 @@
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+
+    <!-- Default cache configuration -->
+    <cache-template name="defaultTemplate">
+        <expiry>
+            <!-- Expire entries 10 minutes after last access -->
+            <ttl unit="minutes">10</ttl>
+        </expiry>
+        <resources>
+            <!-- Keep up to 100 entries in heap memory -->
+            <heap unit="entries">100</heap>
+        </resources>
+    </cache-template>
+
+    <!-- Cache for Doctor entity -->
+    <cache alias="com.exalt.healthcare.domain.model.entity.Doctor" uses-template="defaultTemplate"/>
+
+    <!-- Cache for Patient entity -->
+    <cache alias="com.exalt.healthcare.domain.model.entity.Patient" uses-template="defaultTemplate"/>
+
+</config>
