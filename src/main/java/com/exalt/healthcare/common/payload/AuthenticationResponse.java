@@ -1,4 +1,4 @@
-package com.exalt.healthcare.common.auth;
+package com.exalt.healthcare.common.payload;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

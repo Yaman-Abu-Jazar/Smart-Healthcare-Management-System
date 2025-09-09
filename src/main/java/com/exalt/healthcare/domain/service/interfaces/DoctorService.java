@@ -9,6 +9,5 @@ public interface DoctorService {
     List<Doctor> findDoctorsBySpecialty(String specialty);
     Doctor findDoctorById(long id);
     List<Doctor> findAllDoctors();
-    Doctor updateDoctor(Long id, Doctor doctor);
     void deleteDoctorById(Long id);
 }

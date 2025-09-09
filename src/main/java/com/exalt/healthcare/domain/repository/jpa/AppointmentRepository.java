@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends EntityRepository<Appointment, Long> {
     List<Appointment> findAppointmentsByDate(LocalDate date);
-    List<Appointment> findAppointmentsByDoctor(Doctor doctor);
-    List<Appointment> findAppointmentsByPatient(Patient patient);
+    List<Appointment> findAppointmentsByDoctorId(Long doctorId);
+    List<Appointment> findAppointmentsByPatientId(Long patientId);
 }

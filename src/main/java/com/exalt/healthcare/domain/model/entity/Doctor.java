@@ -3,10 +3,7 @@ package com.exalt.healthcare.domain.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.beans.ConstructorProperties;
 
@@ -17,6 +14,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
+@Builder
+@AllArgsConstructor
 
 @Entity
 public class Doctor implements Serializable {
@@ -42,20 +41,15 @@ public class Doctor implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "doctor")
-    @ToString.Exclude
-    private List<Appointment> appointmentList;
-
     @Size(max = 10)
     private String phone;
 
-    @ConstructorProperties({"first_name", "last_name", "specialty", "user", "appointmentList", "phone"})
-    public Doctor(String first_name, String last_name, String specialty, User user, List<Appointment> appointmentList, String phone){
+    @ConstructorProperties({"first_name", "last_name", "specialty", "user", "phone"})
+    public Doctor(String first_name, String last_name, String specialty, User user, String phone){
         this.first_name = first_name;
         this.last_name = last_name;
         this.specialty = specialty;
         this.user = user;
-        this.appointmentList = appointmentList;
         this.phone = phone;
     }
 }

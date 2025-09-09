@@ -39,7 +39,7 @@ public class User implements UserDetails, CredentialsContainer {
     private String lastName;
 
     @NotBlank
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @NotBlank

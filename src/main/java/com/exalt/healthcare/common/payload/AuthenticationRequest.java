@@ -1,4 +1,4 @@
-package com.exalt.healthcare.common.auth;
+package com.exalt.healthcare.common.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -46,7 +46,6 @@ public class PatientServiceImpl implements PatientService {
         updatedPatient.setAddress(patientDetails.getAddress());
         updatedPatient.setFirst_name(patientDetails.getFirst_name());
         updatedPatient.setLast_name(patientDetails.getLast_name());
-        updatedPatient.setAppointmentList(patientDetails.getAppointmentList());
         updatedPatient.setUser(patientDetails.getUser());
 
         return this.repository.save(updatedPatient);

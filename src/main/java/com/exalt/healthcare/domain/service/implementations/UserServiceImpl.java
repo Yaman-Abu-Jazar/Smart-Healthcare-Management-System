@@ -51,20 +51,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long id, User userDetails){
-        User updatedUser = this.repository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id : " + id));
-
-        updatedUser.setEmail(userDetails.getEmail());
-        updatedUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-        updatedUser.setRole(userDetails.getRole());
-        updatedUser.setFirstName(userDetails.getFirstName());
-        updatedUser.setLastName(userDetails.getLastName());
-
-        return this.repository.save(updatedUser);
-    }
-
-    @Override
     public List<User> findAllUsers(){
         return this.repository.findAll();
     }

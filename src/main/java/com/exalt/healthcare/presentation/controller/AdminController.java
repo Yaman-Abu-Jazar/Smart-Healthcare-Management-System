@@ -1,20 +1,21 @@
 package com.exalt.healthcare.presentation.controller;
 
+import com.exalt.healthcare.common.payload.*;
 import com.exalt.healthcare.common.exception.AppointmentNotFoundException;
 import com.exalt.healthcare.common.exception.DoctorNotFoundException;
 import com.exalt.healthcare.domain.model.entity.Appointment;
 import com.exalt.healthcare.domain.model.entity.Doctor;
 import com.exalt.healthcare.domain.model.entity.Patient;
 import com.exalt.healthcare.domain.model.entity.User;
-import com.exalt.healthcare.domain.service.implementations.AppointmentServiceImpl;
-import com.exalt.healthcare.domain.service.implementations.DoctorServiceImpl;
-import com.exalt.healthcare.domain.service.implementations.PatientServiceImpl;
-import com.exalt.healthcare.domain.service.implementations.UserServiceImpl;
+import com.exalt.healthcare.domain.service.implementations.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,25 +26,25 @@ public class AdminController {
     private final PatientServiceImpl patientService;
     private final UserServiceImpl userService;
     private final AppointmentServiceImpl appointmentService;
+    private final AuthenticationServiceImpl authService;
 
     @Autowired
-    public AdminController(DoctorServiceImpl doctorService, PatientServiceImpl patientService, UserServiceImpl userService, AppointmentServiceImpl appointmentService){
+    public AdminController(DoctorServiceImpl doctorService, PatientServiceImpl patientService, UserServiceImpl userService, AppointmentServiceImpl appointmentService, AuthenticationServiceImpl authService){
         this.doctorService = doctorService;
         this.patientService = patientService;
         this.userService = userService;
         this.appointmentService = appointmentService;
+        this.authService = authService;
     }
-    /// //////////////// Doctors Management
-    @PostMapping("/doctor/add")
-    public Doctor addNewDoctor(@Valid @RequestBody Doctor doctor){
-        return this.doctorService.addingNewDoctor(doctor);
-    }
-
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// Doctor Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
     @PutMapping("/doctor/update/{id}")
-    public ResponseEntity<Doctor> updateDoctor(@PathVariable Long id, @Valid @RequestBody Doctor doctor)
+    public ResponseEntity<AuthenticationResponse> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorDto doctor)
             throws DoctorNotFoundException {
-        Doctor updatedDoctor = this.doctorService.updateDoctor(id, doctor);
-        return ResponseEntity.ok(updatedDoctor);
+        return ResponseEntity.ok(this.authService.updateDoctor(id, doctor));
     }
 
     @DeleteMapping("/doctor/delete/{id}")
@@ -51,16 +52,15 @@ public class AdminController {
         this.doctorService.deleteDoctorById(id);
         return ResponseEntity.ok().build();
     }
-    /// /////////////////// Patient Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// Patient Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/patient/all")
     public ResponseEntity<List<Patient>> getAllPatients(){
         List<Patient> list = this.patientService.getAllPatients();
         return ResponseEntity.ok(list);
-    }
-
-    @PostMapping("/patient/add")
-    public ResponseEntity<Patient> addNewPatient(@Valid @RequestBody Patient patient){
-        return ResponseEntity.ok(this.patientService.savePatient(patient));
     }
 
     @GetMapping("/patient/get/{id}")
@@ -69,9 +69,8 @@ public class AdminController {
     }
 
     @PutMapping("/patient/update/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @Valid @RequestBody Patient patient) {
-        Patient updatedPatient = this.patientService.updatePatient(id, patient);
-        return ResponseEntity.ok(updatedPatient);
+    public ResponseEntity<AuthenticationResponse> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientDto patient) {
+        return ResponseEntity.ok(this.authService.updatePatient(id, patient));
     }
 
     @DeleteMapping("/patient/delete/{id}")
@@ -79,40 +78,33 @@ public class AdminController {
         this.patientService.deletePatient(id);
         return ResponseEntity.ok().build();
     }
-    /// ///////////////// User Management
-    @PostMapping("/user/add")
-    public User addNewUser(@Valid @RequestBody User user){
-        return this.userService.createUser(user);
-    }
-
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// User Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
     @DeleteMapping("/user/delete/{id}")
-    public ResponseEntity<User> addNewUser(@PathVariable Long id){
+    public ResponseEntity<User> deleteUser(@PathVariable Long id){
         this.userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/user/all")
-    public ResponseEntity<List<User>> getAllUsers(){
-        return ResponseEntity.ok(this.userService.findAllUsers());
-    }
-
-    @GetMapping("/user/get/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email){
-        return ResponseEntity.ok(this.userService.findByEmail(email));
-    }
-
     @PutMapping("/user/update/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user){
-        return ResponseEntity.ok(this.userService.updateUser(id, user));
+    public ResponseEntity<AuthenticationResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserDto user){
+        return ResponseEntity.ok(this.authService.updateUser(id, user));
     }
-    /// /////////////////// Appointment Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// Appointment Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/appointment/get/all")
     public List<Appointment> getAllAppointments(){
         return this.appointmentService.getAllAppointments();
     }
 
     @PostMapping("/appointment/add")
-    public Appointment addNewAppointment(@Valid @RequestBody Appointment appointment){
+    public Appointment addNewAppointment(@Valid @RequestBody AppointmentDto appointment){
         return this.appointmentService.addNewAppointment(appointment);
     }
 
@@ -127,5 +119,38 @@ public class AdminController {
             throws AppointmentNotFoundException {
         Appointment appointment = this.appointmentService.updateAppointment(id, newAppointment);
         return ResponseEntity.ok(appointment);
+    }
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// /////////////////////////// Registration Management
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    @PostMapping("/doctor/register")
+    public ResponseEntity<AuthenticationResponse> registerDoctor(
+            @RequestBody DoctorDto request
+    ) {
+        return ResponseEntity.ok(authService.registerDoctor(request));
+    }
+
+    @PostMapping("/patient/register")
+    public ResponseEntity<AuthenticationResponse> registerPatient(
+            @RequestBody PatientDto request
+    ) {
+        return ResponseEntity.ok(authService.registerPatient(request));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> registerAdmin(
+            @RequestBody UserDto request
+    ) {
+        return ResponseEntity.ok(authService.register(request));
+    }
+
+    @PostMapping("/refresh-token")
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        authService.refreshToken(request, response);
     }
 }

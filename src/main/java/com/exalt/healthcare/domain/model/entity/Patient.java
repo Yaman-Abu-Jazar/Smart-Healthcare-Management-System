@@ -3,10 +3,7 @@ package com.exalt.healthcare.domain.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
@@ -15,6 +12,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @ToString
+@Builder
+@AllArgsConstructor
 
 @Entity
 public class Patient {
@@ -41,15 +40,11 @@ public class Patient {
     @NotNull
     private User user;
 
-    @OneToMany(mappedBy = "patient")
-    private List<Appointment> appointmentList;
-
-    @ConstructorProperties({"first_name", "last_name", "address", "user", "appointmentList"})
-    public Patient(String first_name, String last_name, String address, User user, List<Appointment> appointmentList){
+    @ConstructorProperties({"first_name", "last_name", "address", "user"})
+    public Patient(String first_name, String last_name, String address, User user){
         this.first_name = first_name;
         this.last_name = last_name;
         this.address = address;
         this.user = user;
-        this.appointmentList = appointmentList;
     }
 }

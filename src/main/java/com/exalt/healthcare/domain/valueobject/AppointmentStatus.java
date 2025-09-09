@@ -6,8 +6,9 @@ import lombok.Getter;
 
 public enum AppointmentStatus {
     SCHEDULED(0, "scheduled"),
-    COMPLETED(1, "completed"),
-    CANCELLED(2, "cancelled");
+    BUSY(1, "busy"),
+    COMPLETED(2, "completed"),
+    CANCELLED(3, "cancelled");
 
     private final int level;
     private final String description;

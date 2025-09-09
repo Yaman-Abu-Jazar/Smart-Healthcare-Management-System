@@ -2,6 +2,8 @@ package com.exalt.healthcare.presentation.controller;
 
 import com.exalt.healthcare.common.exception.DoctorNotFoundException;
 import com.exalt.healthcare.common.exception.PatientNotFoundException;
+import com.exalt.healthcare.common.payload.AuthenticationRequest;
+import com.exalt.healthcare.common.payload.AuthenticationResponse;
 import com.exalt.healthcare.domain.model.document.MedicalRecord;
 import com.exalt.healthcare.domain.model.document.Prescription;
 import com.exalt.healthcare.domain.model.entity.Doctor;
