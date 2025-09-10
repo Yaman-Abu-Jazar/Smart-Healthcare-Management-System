@@ -22,4 +22,5 @@ public interface AppointmentService {
     Appointment bookAppointment(Long appointmentId);
     Appointment cancelAppointment(Long appointmentId);
     Appointment cancelAppointmentByDoctor(Long appointmentId);
+    List<Appointment> getPatientAppointments();
 }

@@ -56,6 +56,27 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .status(AppointmentStatus.SCHEDULED)
                 .build();
 
+        List<Appointment> appointments = this.appointmentRepository.findAppointmentsByDoctor_Id(doctor.getId());
+
+        for (Appointment ap : appointments) {
+            // Only check appointments on the same date
+            if (ap.getDate().isEqual(newAppointment.getDate())) {
+                boolean overlaps =
+                        newAppointment.getStartTime().isBefore(ap.getEndTime()) &&
+                                newAppointment.getEndTime().isAfter(ap.getStartTime());
+
+                if (overlaps) {
+                    throw new RuntimeException(
+                            "New appointment conflicts with existing appointment (ID: " + ap.getId() + ")");
+                }
+            }
+        }
+
+        if (newAppointment.getEndTime().isBefore(newAppointment.getStartTime())
+                || newAppointment.getEndTime().isEqual(newAppointment.getStartTime())) {
+            throw new RuntimeException("Invalid time: appointment end time must be after start time");
+        }
+
         return this.appointmentRepository.save(newAppointment);
     }
 
@@ -93,6 +114,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public List<Appointment> getAppointmentsByPatientId(Long patientId) {
         return this.appointmentRepository.findAppointmentsByPatient_Id(patientId);
+    }
+
+    @Override
+    public List<Appointment> getPatientAppointments() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User user = this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email : " + email));
+
+        Patient patient = this.patientRepository.findByUser(user)
+                .orElseThrow(() -> new DoctorNotFoundException("Patient not found with user id : " + user.getId()));
+
+        return this.appointmentRepository.findAppointmentsByPatient_Id(patient.getId());
     }
 
     @Override
@@ -147,11 +182,18 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .orElseThrow(() -> new PatientNotFoundException("Patient not found with user id : " + user.getId()));
 
         if(appointment.getStatus() == AppointmentStatus.SCHEDULED){
+            List<Appointment> myAppointments = this.appointmentRepository.findAppointmentsByPatient_Id(patient.getId());
+            for(Appointment ap: myAppointments){
+                if(ap.getStartTime().isEqual(appointment.getStartTime()) || (ap.getStartTime().isAfter(appointment.getStartTime()) && ap.getStartTime().isBefore(appointment.getEndTime()))
+                || (ap.getEndTime().isAfter(appointment.getStartTime()) && ap.getEndTime().isBefore(appointment.getEndTime()))){
+                    throw new RuntimeException("Appointment with id : " + appointment.getId() + " has a contradiction with your appointments");
+                }
+            }
             appointment.setStatus(AppointmentStatus.BUSY);
             appointment.setPatient(patient);
             return this.appointmentRepository.save(appointment);
         } else {
-            throw new AppointmentNotFoundException("Appointment with id : " + appointmentId + " is not available");
+            throw new RuntimeException("Appointment with id : " + appointmentId + " is not available");
         }
     }
 

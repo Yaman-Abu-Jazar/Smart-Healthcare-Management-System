@@ -30,6 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -232,7 +233,7 @@ public class AppointmentServiceImplTest {
     void bookAppointment_WithNonScheduledAppointment_ShouldThrowException() {
         // Given
         Long appointmentId = 1L;
-        String patientEmail = "jane.doe@email.com";
+        String patientEmail = "jahn.doe@email.com";
 
         testAppointment.setStatus(AppointmentStatus.BUSY); // Already booked
 
@@ -245,8 +246,8 @@ public class AppointmentServiceImplTest {
             when(patientRepository.findByUser(patientUser)).thenReturn(Optional.of(testPatient));
 
             // When & Then
-            AppointmentNotFoundException exception = assertThrows(
-                    AppointmentNotFoundException.class,
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
                     () -> appointmentService.bookAppointment(appointmentId)
             );
 
@@ -484,4 +485,87 @@ public class AppointmentServiceImplTest {
         verify(appointmentRepository, times(1)).findById(invalidId);
         verify(appointmentRepository, never()).save(any(Appointment.class));
     }
+
+    @Test
+    void bookAppointment_WithNoConflicts_ShouldBookSuccessfully() {
+        // Given
+        Long appointmentId = 1L;
+        String patientEmail = "jane.doe@email.com";
+
+        testAppointment.setStatus(AppointmentStatus.SCHEDULED);
+        testAppointment.setPatient(null);
+
+        List<Appointment> myAppointments = Arrays.asList(
+                Appointment.builder()
+                        .id(2L)
+                        .date(testAppointment.getDate())
+                        .startTime(testAppointment.getStartTime().minusHours(2))
+                        .endTime(testAppointment.getStartTime().minusHours(1)) // ends before new one
+                        .status(AppointmentStatus.BUSY)
+                        .patient(testPatient)
+                        .build()
+        );
+
+        try (MockedStatic<SecurityContextHolder> securityContextHolderMock = mockStatic(SecurityContextHolder.class)) {
+            securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.getName()).thenReturn(patientEmail);
+            when(userRepository.findByEmail(patientEmail)).thenReturn(Optional.of(patientUser));
+            when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(testAppointment));
+            when(patientRepository.findByUser(patientUser)).thenReturn(Optional.of(testPatient));
+            when(appointmentRepository.findAppointmentsByPatient_Id(testPatient.getId())).thenReturn(myAppointments);
+            when(appointmentRepository.save(any(Appointment.class))).thenReturn(testAppointment);
+
+            // When
+            Appointment result = appointmentService.bookAppointment(appointmentId);
+
+            // Then
+            assertNotNull(result);
+            assertEquals(AppointmentStatus.BUSY, result.getStatus());
+            assertEquals(testPatient, result.getPatient());
+            verify(appointmentRepository, times(1)).save(testAppointment);
+        }
+    }
+
+    @Test
+    void bookAppointment_WithConflictingAppointment_ShouldThrowException() {
+        // Given
+        Long appointmentId = 1L;
+        String patientEmail = "jane.doe@email.com";
+
+        testAppointment.setStatus(AppointmentStatus.SCHEDULED);
+        testAppointment.setPatient(null);
+
+        // conflicting appointment at the same time
+        Appointment conflicting = Appointment.builder()
+                .id(2L)
+                .date(testAppointment.getDate())
+                .startTime(testAppointment.getStartTime()) // same start time
+                .endTime(testAppointment.getEndTime())
+                .status(AppointmentStatus.BUSY)
+                .patient(testPatient)
+                .build();
+
+        List<Appointment> myAppointments = Collections.singletonList(conflicting);
+
+        try (MockedStatic<SecurityContextHolder> securityContextHolderMock = mockStatic(SecurityContextHolder.class)) {
+            securityContextHolderMock.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+            when(securityContext.getAuthentication()).thenReturn(authentication);
+            when(authentication.getName()).thenReturn(patientEmail);
+            when(userRepository.findByEmail(patientEmail)).thenReturn(Optional.of(patientUser));
+            when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(testAppointment));
+            when(patientRepository.findByUser(patientUser)).thenReturn(Optional.of(testPatient));
+            when(appointmentRepository.findAppointmentsByPatient_Id(testPatient.getId())).thenReturn(myAppointments);
+
+            // When & Then
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> appointmentService.bookAppointment(appointmentId)
+            );
+
+            assertTrue(exception.getMessage().contains("contradiction"));
+            verify(appointmentRepository, never()).save(any(Appointment.class));
+        }
+    }
+
 }

@@ -67,6 +67,11 @@ public class PatientController {
         return ResponseEntity.ok(this.appointmentService.getAppointmentsByDoctorId(doctorId));
     }
 
+    @GetMapping("/appointment/mine")
+    public ResponseEntity<List<Appointment>> getMyAppointments(){
+        return ResponseEntity.ok(this.appointmentService.getPatientAppointments());
+    }
+
     @PutMapping("/book/appointment/{id}")
     public ResponseEntity<Appointment> bookAppointment(@PathVariable Long id){
         return ResponseEntity.ok(this.appointmentService.bookAppointment(id));
