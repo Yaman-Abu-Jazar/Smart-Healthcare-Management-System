@@ -3,7 +3,6 @@ package com.exalt.healthcare.domain.service.implementations;
 import com.exalt.healthcare.common.exception.DoctorNotFoundException;
 import com.exalt.healthcare.domain.model.entity.Doctor;
 import com.exalt.healthcare.domain.repository.jpa.DoctorRepository;
-import com.exalt.healthcare.domain.repository.jpa.UserRepository;
 import com.exalt.healthcare.domain.service.interfaces.DoctorService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +58,6 @@ public class DoctorServiceImpl implements DoctorService {
     public void deleteDoctorById(Long id) throws DoctorNotFoundException {
         Doctor doctor = this.doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor not found with id: " + id));
-        this.doctorRepository.deleteById(id);
+        this.doctorRepository.deleteById(doctor.getId());
     }
 }
