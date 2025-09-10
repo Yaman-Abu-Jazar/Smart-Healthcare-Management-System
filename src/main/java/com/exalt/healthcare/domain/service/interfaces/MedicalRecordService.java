@@ -8,9 +8,7 @@ import java.util.List;
 public interface MedicalRecordService {
     MedicalRecord saveMedicalRecord(MedicalRecordDto medicalRecord);
     List<MedicalRecord> getMyMedicalRecordsByPatient();
-    List<MedicalRecord> getMedicalRecordsByDoctorId(Long doctorId);
     MedicalRecord getMedicalRecordById(Long id);
-    List<MedicalRecord> getAllMedicalRecords();
     MedicalRecord updateMedicalRecord(Long id, MedicalRecord recordDetails);
     void deleteMedicalRecord(Long id);
 }

@@ -95,17 +95,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public Prescription getPrescriptionById(Long id) {
-        return this.prescriptionRepository.findById(id)
-                .orElseThrow(() -> new PrescriptionNotFoundException("Prescription not found with id : " + id));
-    }
-
-    @Override
-    public List<Prescription> getAllPrescriptions() {
-        return this.prescriptionRepository.findAll();
-    }
-
-    @Override
     public Prescription updatePrescription(Long id, Prescription prescription) {
         Prescription updatedPrescription = this.prescriptionRepository.findById(id)
                 .orElseThrow(() -> new PrescriptionNotFoundException("Prescription not found with id : " + id));

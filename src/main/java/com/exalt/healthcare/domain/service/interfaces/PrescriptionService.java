@@ -9,8 +9,6 @@ public interface PrescriptionService {
     Prescription savePrescription(PrescriptionDto dto);
     List<Prescription> getPrescriptionsByPatientId(Long patientId);
     List<Prescription> getPrescriptionsByDoctorId();
-    Prescription getPrescriptionById(Long id);
-    List<Prescription> getAllPrescriptions();
     Prescription updatePrescription(Long id, Prescription prescription);
     void deletePrescription(Long id);
     List<Prescription> getMyPatientPrescriptions();

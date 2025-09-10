@@ -67,26 +67,18 @@ public class DoctorController {
     /// ////////////////////////////////////////////////////////////////////////////////////
     /// ////////////////////////////////////////////////////////////////////////////////////
     @GetMapping("/appointment/get/all")
-    public List<Appointment> getAllAppointments(){
-        return this.appointmentService.getAllAppointments();
+    public ResponseEntity<List<Appointment>> getAllAppointments(){
+        return ResponseEntity.ok(this.appointmentService.getAllAppointments());
     }
 
-    @PostMapping("/appointment/add")
-    public Appointment addNewAppointment(@Valid @RequestBody AppointmentDto appointment){
-        return this.appointmentService.addNewAppointment(appointment);
+    @PutMapping("/appointment/{id}/complete")
+    public ResponseEntity<Appointment> markAppointmentAsComplete(@PathVariable Long id){
+        return ResponseEntity.ok(this.appointmentService.completeAppointment(id));
     }
 
-    @DeleteMapping("/appointment/delete/{id}")
-    public ResponseEntity<Appointment> deleteAppointment(@PathVariable Long id){
-        this.appointmentService.deleteAppointment(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/appointment/update/{id}")
-    public ResponseEntity<Appointment> updateAppointment(@Valid @RequestBody Appointment newAppointment, @PathVariable Long id)
-            throws AppointmentNotFoundException {
-        Appointment appointment = this.appointmentService.updateAppointment(id, newAppointment);
-        return ResponseEntity.ok(appointment);
+    @PutMapping("/appointment/{id}/cancel")
+    public ResponseEntity<Appointment> markAppointmentAsCancelled(@PathVariable Long id){
+        return ResponseEntity.ok(this.appointmentService.cancelAppointmentByDoctor(id));
     }
     /// ////////////////////////////////////////////////////////////////////////////////////
     /// ////////////////////////////////////////////////////////////////////////////////////

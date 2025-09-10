@@ -88,19 +88,9 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public List<MedicalRecord> getMedicalRecordsByDoctorId(Long doctorId) {
-        return this.medicalRecordsRepository.findByDoctorIdOrderByCreatedAtDesc(doctorId);
-    }
-
-    @Override
     public MedicalRecord getMedicalRecordById(Long id) {
         return this.medicalRecordsRepository.findById(id)
                 .orElseThrow(() -> new MedicalRecordNotFoundException("Medical Record not found with id : " + id));
-    }
-
-    @Override
-    public List<MedicalRecord> getAllMedicalRecords() {
-        return this.medicalRecordsRepository.findAll();
     }
 
     @Override

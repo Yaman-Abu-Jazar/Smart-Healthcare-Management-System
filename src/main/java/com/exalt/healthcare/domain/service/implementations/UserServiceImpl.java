@@ -17,18 +17,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
 
-    private final PasswordEncoder passwordEncoder;
-
     @Autowired
-    public UserServiceImpl(UserRepository repository, PasswordEncoder passwordEncoder){
+    public UserServiceImpl(UserRepository repository){
         this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Override
-    public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repository.save(user);
     }
 
     @Override
@@ -48,10 +39,5 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with id : " + id));
 
         this.repository.deleteById(id);
-    }
-
-    @Override
-    public List<User> findAllUsers(){
-        return this.repository.findAll();
     }
 }
