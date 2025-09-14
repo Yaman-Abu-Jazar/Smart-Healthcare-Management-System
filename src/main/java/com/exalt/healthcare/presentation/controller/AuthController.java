@@ -2,6 +2,7 @@ package com.exalt.healthcare.presentation.controller;
 
 import com.exalt.healthcare.common.payload.AuthenticationRequest;
 import com.exalt.healthcare.common.payload.AuthenticationResponse;
+import com.exalt.healthcare.common.payload.UserDto;
 import com.exalt.healthcare.domain.service.implementations.AuthenticationServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
