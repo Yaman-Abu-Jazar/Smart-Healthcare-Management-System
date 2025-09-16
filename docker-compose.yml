@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: healthcare_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - healthcare-network
+
+  mongodb:
+    image: mongo:6
+    container_name: healthcare_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - healthcare-network
+
+  backend:
+    build: .
+    container_name: healthcare_app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - mongodb
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATA_MONGODB_URI: ${SPRING_DATA_MONGODB_URI}
+      APPLICATION_SECURITY_JWT_SECRET_KEY: ${JWT_SECRET}
+      APPLICATION_SECURITY_JWT_EXPIRATION: ${JWT_EXPIRATION}
+      APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+    networks:
+      - healthcare-network
+
+networks:
+  healthcare-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
