@@ -16,6 +16,7 @@ import java.util.Objects;
 @Service
 public class SequenceGeneratorServiceImpl implements SequenceGeneratorService {
 
+    public static final String SEQ = "seq";
     private final MongoOperations mongoOperations;
 
     @Autowired
@@ -26,7 +27,7 @@ public class SequenceGeneratorServiceImpl implements SequenceGeneratorService {
     @Override
     public long generateSequence(String seqName) {
         DatabaseSequence counter = mongoOperations.findAndModify(query(where("_id").is(seqName)),
-                new Update().inc("seq",1), options().returnNew(true).upsert(true),
+                new Update().inc(SEQ,1), options().returnNew(true).upsert(true),
                 DatabaseSequence.class);
         return !Objects.isNull(counter) ? counter.getSeq() : 1;
     }
